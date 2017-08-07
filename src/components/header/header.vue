@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="detail-close">
-                <i class="icon-close"></i>
+                <i class="icon-close" @click="close"></i>
             </div>
         </div>
     </div>
@@ -68,6 +68,9 @@
         methods: {
           showDetail() {
             this.detailShow = true;
+          },
+          close() {
+            this.detailShow = false;
           }
         },
         created() {
@@ -79,7 +82,7 @@
     };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
     @import "../../common/stylus/mixin.styl";
     .header
         position relative

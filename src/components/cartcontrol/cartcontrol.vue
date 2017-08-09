@@ -12,7 +12,6 @@
 
 <script type="text/ecmascript-6">
     import Vue from 'vue';
-    let eventHub = new Vue();
 
     export default {
       props: {
@@ -32,7 +31,7 @@
           } else {
             this.food.count ++;
           }
-          eventHub.$emit('add-cart', event.target);
+          this.$root.eventHub.$emit('add-cart', event);
         },
         decreaseCart(event) {
           if (!event._constructed) {
@@ -46,7 +45,7 @@
     };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
     .cartcontrol
         font-size 0
         .move-enter-active, .move-leave-active

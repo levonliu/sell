@@ -97,6 +97,9 @@
             });
           }
         });
+        this.$root.eventHub.$on('add-cart', (event) => {
+          this._drop(event);
+        });
       },
       methods: {
 //        实现菜单栏和商品栏滚动
@@ -132,24 +135,21 @@
             this.listHeight.push(height);
           }
         },
-        _drop(target) {
-            this.$refs.shopcart.drop(target);
+        _drop(event) {
+          if (!event._constructed) {
+            return;
+          }
+          this.$refs.shopcart.drop(event.target);
         }
       },
       components: {
         shopcart,
         cartcontrol
-      },
-      event: {
-        'cart.add' (target) {
-          console.log(target);
-          this._drop(target);
-        }
       }
     };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
     @import "../../common/stylus/mixin.styl"
     .goods
         display flex

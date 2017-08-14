@@ -136,10 +136,12 @@
           }
         },
         _drop(event) {
-          if (!event._constructed) {
-            return;
-          }
-          this.$refs.shopcart.drop(event.target);
+//          if (!event._constructed) {
+//            return;
+//          }
+          this.$nextTick(() => {
+            this.$refs.shopcart.drop(event.target);
+          });
         }
       },
       components: {

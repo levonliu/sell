@@ -1,18 +1,17 @@
 <template>
     <div class="cartcontrol">
         <transition name="move">
-            <div class="cart-decrease" v-show="food.count > 0" @click="decreaseCart($event)">
+            <div class="cart-decrease" v-show="food.count > 0" @click.stop.prevent="decreaseCart($event)">
                 <span class="inner icon-remove_circle_outline"></span>
             </div>
         </transition>
         <div class="cart-count" v-show="food.count > 0">{{food.count}}</div>
-        <div class="cart-add icon-add_circle" @click="addCart($event)"></div>
+        <div class="cart-add icon-add_circle" @click.stop.prevent="addCart($event)"></div>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
     import Vue from 'vue';
-    let eventHub = new Vue();
 
     export default {
       props: {
@@ -32,7 +31,7 @@
           } else {
             this.food.count ++;
           }
-          eventHub.$emit('add-cart', event.target);
+          this.$root.eventHub.$emit('add-cart', event.target);
         },
         decreaseCart(event) {
           if (!event._constructed) {
@@ -46,16 +45,16 @@
     };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
     .cartcontrol
         font-size 0
         .move-enter-active, .move-leave-active
             transition all 0.4s linear
             opacity 1
-            transform translate3D(0, 0, 0)
+            transform translate3d(0, 0, 0)
         .move-enter, .move-leave-to
             opacity 0
-            transform translate3D(24px, 0, 0) rotate(180deg)
+            transform translate3d(24px, 0, 0) rotate(180deg)
         .cart-decrease
             display inline-block
             padding 6px

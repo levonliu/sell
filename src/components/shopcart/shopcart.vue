@@ -107,7 +107,7 @@
       }
     };
 </script>
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" type="text/stylus">
     .shopcart
         position fixed
         left 0

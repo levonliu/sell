@@ -97,8 +97,8 @@
             });
           }
         });
-        this.$root.eventHub.$on('add-cart', (event) => {
-          this._drop(event);
+        this.$root.eventHub.$on('add-cart', (target) => {
+          this._drop(target);
         });
       },
       methods: {
@@ -135,12 +135,13 @@
             this.listHeight.push(height);
           }
         },
-        _drop(event) {
+        _drop(target) {
 //          if (!event._constructed) {
 //            return;
 //          }
+          // 体验优化,异步执行下落动画
           this.$nextTick(() => {
-            this.$refs.shopcart.drop(event.target);
+            this.$refs.shopcart.drop(target);
           });
         }
       },

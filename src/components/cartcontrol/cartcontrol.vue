@@ -31,8 +31,8 @@
           } else {
             this.food.count ++;
           }
-//          this.$root.eventHub.$emit('add-cart', event);
-          this.$emit('add', event.target);
+          this.$root.eventHub.$emit('add-cart', event.target);
+//          this.$emit('add', event.target);
         },
         decreaseCart(event) {
           if (!event._constructed) {

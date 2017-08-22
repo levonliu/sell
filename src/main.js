@@ -13,32 +13,28 @@ import './common/stylus/index.styl';
 Vue.use(VueRouter);
 Vue.use(VueResource);
 
+const routes = [{
+  path: '/',
+  redirect: '/goods'
+}, {
+  path: '/goods',
+  component: goods
+}, {
+  path: '/ratings',
+  component: ratings
+}, {
+  path: '/seller',
+  component: seller
+}];
+
 const router = new VueRouter({
-  routes: [
-    {
-      path: '/',
-      name: 'goods',
-      component: goods
-    },
-    {
-      path: '/ratings',
-      name: 'ratings',
-      component: ratings
-    },
-    {
-      path: '/seller',
-      name: 'seller',
-      component: seller
-    }
-  ]
+  linkActiveClass: 'active',
+  routes
 });
 
+/* eslint-disable no-new */
 new Vue({
+  el: '#app',
   router,
-  template: '<App/>',
-  components: { App },
-  data: {
-    eventHub: new Vue()
-  }
-}).$mount('#app');
-
+  render: h => h(App)
+});

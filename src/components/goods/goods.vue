@@ -3,7 +3,7 @@
         <div class="goods">
             <div class="menu-wrapper" ref="menuWrapper">
                 <ul>
-                    <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex === index}" @click="selectMenu(index, $event)">
+                    <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex === index}" @click="selectMenu(index, $event)" ref="menuList">
                         <span class="text border-1px">
                             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
                         </span>
@@ -12,7 +12,7 @@
             </div>
             <div class="foods-wrapper" ref="foodsWrapper">
                 <ul>
-                    <li v-for="item in goods" class="food-list food-list-hook">
+                    <li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
                         <h1 class="title">{{item.name}}</h1>
                         <ul>
                            <li @click="selectFood(food, $event)" v-for="food in item.foods" class="food-item border-1px">
@@ -30,7 +30,7 @@
                                        <span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
                                    </div>
                                    <div class="cartcontrol-wrapper">
-                                       <cartcontrol :food="food"></cartcontrol>
+                                       <cartcontrol @add="addCart" :food="food"></cartcontrol>
                                    </div>
                                </div>
                            </li>
@@ -40,7 +40,7 @@
             </div>
             <shopcart ref="shopcart" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shopcart>
         </div>
-        <food :food="selectedFood" ref="food"></food>
+        <food @add="addCart" :food="selectedFood" ref="food"></food>
     </div>
 </template>
 
@@ -51,6 +51,7 @@
     import food from '../food/food.vue';
 
     const ERR_OK = 0;
+
     export default{
       props: {
         seller: {
@@ -71,6 +72,7 @@
             let height1 = this.listHeight[i];
             let height2 = this.listHeight[i + 1];
             if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+              this._followScroll(i);
               return i;
             }
           }
@@ -102,12 +104,34 @@
             });
           }
         });
-        this.$root.eventHub.$on('add-cart', (target) => {
-          this._drop(target);
-        });
       },
       methods: {
-//        实现菜单栏和商品栏滚动
+        // 点击菜单栏实现商品栏对应滚动
+        selectMenu(index, event) {
+          if (!event._constructed) {
+            return;
+          }
+          let foodList = this.$refs.foodList;
+          let el = foodList[index];
+          this.foodsScroll.scrollToElement(el, 300);
+        },
+        selectFood(food, event) {
+          if (!event._constructed) {
+            return;
+          }
+          this.selectedFood = food;
+          this.$refs.food.show();
+        },
+        addCart(target) {
+          this._drop(target);
+        },
+        _drop(target) {
+          // 体验优化,异步执行下落动画
+          this.$nextTick(() => {
+            this.$refs.shopcart.drop(target);
+          });
+        },
+        // 实现菜单栏和商品栏滚动
         _initScroll() {
           this.menuScroll = new BScroll(this.$refs.menuWrapper, {
             click: true
@@ -117,21 +141,15 @@
             probeType: 3
           });
           this.foodsScroll.on('scroll', (pos) => {
-            this.scrollY = Math.abs(Math.round(pos.y));
+            // 判断滑动方向，避免下拉时分类高亮错误（如第一分类商品数量为1时，下拉使得第二分类高亮）
+            if (pos.y <= 0) {
+              this.scrollY = Math.abs(Math.round(pos.y));
+            }
           });
         },
-//        点击菜单栏实现商品栏对应滚动
-        selectMenu(index, event) {
-          if (!event._constructed) {
-            return;
-          }
-          let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
-          let el = foodList[index];
-          this.foodsScroll.scrollToElement(el, 300);
-        },
-//        滚动商品实现对应菜单栏选中
+        // 滚动商品实现对应菜单栏选中
         _calculateHeight() {
-          let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+          let foodList = this.$refs.foodList;
           let height = 0;
           this.listHeight.push(height);
           for (let i = 0; i < foodList.length; i++) {
@@ -140,18 +158,10 @@
             this.listHeight.push(height);
           }
         },
-        _drop(target) {
-          // 体验优化,异步执行下落动画
-          this.$nextTick(() => {
-            this.$refs.shopcart.drop(target);
-          });
-        },
-        selectFood(food, event) {
-          if (!event._constructed) {
-            return;
-          }
-          this.selectedFood = food;
-          this.$refs.food.show();
+        _followScroll(index) {
+          let menuList = this.$refs.menuList;
+          let el = menuList[index];
+          this.menuScroll.scrollToElement(el, 300, 0, -100);
         }
       },
       components: {

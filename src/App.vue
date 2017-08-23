@@ -51,10 +51,6 @@
         width: 100%
         height: 40px
         line-height: 40px
-<<<<<<< HEAD
-=======
-        border-bottom: 1px solid rgba(7, 17, 27, 0.1)
->>>>>>> da8d0d610cb2c8089ebc37cea3cf5c3890522abc
         border-1px(rgba(7, 17, 27, 0.1))
         .tab-item
             flex: 1
